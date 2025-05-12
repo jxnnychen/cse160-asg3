@@ -1,0 +1,56 @@
+<!-- 
+ Jenny Chen
+ jchen679@ucsc.edu
+ -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>JC World</title>
+    <style>
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+      }
+    </style>
+  </head>
+
+  <body onload="main()">
+    <canvas id="webgl" width="400" height="400">
+    Please use a browser that supports "canvas"
+    </canvas>
+    <p id="numdot"> XXX </p>
+    <div class="row">
+      - rotate camera with mouse (click and drag)
+    </div>
+    <div class="row">
+      - implemented block collision
+    </div>
+    <div class="row">
+      - simple minecraft (F to place, R to remove)
+    </div>
+    <div class="row">
+      Camera Angle <input type="range" min="0" max="360" value="5" class="slider" id="angleSlide">
+    </div>
+    <div class="row">
+      Block Types
+      <button id="blockTypeSnow">Snow (1)</button>
+      <button id="blockTypeIce">Ice (2)</button>
+      <button id="blockTypeDirt">Dirt (3)</button>
+      <button id="blockTypePackedIce">Packed Ice (4)</button>
+      Current: <span id="currentBlockType">Snow</span>
+    </div>
+
+    <script src="../lib/webgl-utils.js"></script>
+    <script src="../lib/webgl-debug.js"></script>
+    <script src="../lib/cuon-utils.js"></script>
+    <script src="../lib/cuon-matrix.js"></script>
+    <script src="World.js"></script>
+    <script src="Triangle.js"></script>
+    <script src="Camera.js"></script>
+    <script src="Cube.js"></script>
+  </body>
+</html>
