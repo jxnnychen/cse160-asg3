@@ -42,61 +42,91 @@ class Camera {
         return g_worldMap[1][iz][ix] === 0 && g_worldMap[2][iz][ix] === 0;
       }
 
-forward(step = 1) {
-    const dir  = this._normalize(this._sub(this.at, this.eye));
-    const move = this._scale(dir, step);
-    const newEye = this._add(this.eye, move);
-    const newAt  = this._add(this.at,  move);
-    if (this._canMoveTo(newEye)) {
-      this.eye = newEye;
-      this.at  = newAt;
-      this.updateMatrices();
-    }
-  }
+      forward(step = 1) {
+        // Compute full direction, then project onto XZ plane
+        const dir3 = this._sub(this.at, this.eye);
+        const horiz = this._normalize(new Vector3([dir3.elements[0], 0, dir3.elements[2]]));
+        const move  = this._scale(horiz, step);
+        const newEye = this._add(this.eye, move);
+        const newAt  = this._add(this.at,  move);
+        if (this._canMoveTo(newEye)) {
+          this.eye = newEye;
+          this.at  = newAt;
+          this.updateMatrices();
+        }
+      }
 
-  back(step = 1) {
-    const dir  = this._normalize(this._sub(this.at, this.eye));
-    const move = this._scale(dir, -step);
-    const newEye = this._add(this.eye, move);
-    const newAt  = this._add(this.at,  move);
-    if (this._canMoveTo(newEye)) {
-      this.eye = newEye;
-      this.at  = newAt;
-      this.updateMatrices();
-    }
-  }
+      back(step = 1) {
+        const dir3 = this._sub(this.at, this.eye);
+        const horiz = this._normalize(new Vector3([dir3.elements[0], 0, dir3.elements[2]]));
+        const move  = this._scale(horiz, -step);
+        const newEye = this._add(this.eye, move);
+        const newAt  = this._add(this.at,  move);
+        if (this._canMoveTo(newEye)) {
+          this.eye = newEye;
+          this.at  = newAt;
+          this.updateMatrices();
+        }
+      }
 
-  left(step = 1) {
-    const fwd  = this._normalize(this._sub(this.at, this.eye));
-    const left = this._normalize(this._cross(this.up, fwd)); // up × fwd
-    const move = this._scale(left, step);
-    const newEye = this._add(this.eye, move);
-    const newAt  = this._add(this.at,  move);
-    if (this._canMoveTo(newEye)) {
-      this.eye = newEye;
-      this.at  = newAt;
-      this.updateMatrices();
-    }
-  }
+      left(step = 1) {
+        // Compute left vector in XZ plane
+        const fwd3 = this._sub(this.at, this.eye);
+        const left3 = this._cross(this.up, fwd3); // up × fwd
+        const horiz = this._normalize(new Vector3([left3.elements[0], 0, left3.elements[2]]));
+        const move  = this._scale(horiz, step);
+        const newEye = this._add(this.eye, move);
+        const newAt  = this._add(this.at,  move);
+        if (this._canMoveTo(newEye)) {
+          this.eye = newEye;
+          this.at  = newAt;
+          this.updateMatrices();
+        }
+      }
 
-  right(step = 1) {
-    const fwd   = this._normalize(this._sub(this.at, this.eye));
-    const right = this._normalize(this._cross(fwd, this.up)); // fwd × up
-    const move  = this._scale(right, step);
-    const newEye = this._add(this.eye, move);
-    const newAt  = this._add(this.at,  move);
-    if (this._canMoveTo(newEye)) {
-      this.eye = newEye;
-      this.at  = newAt;
-      this.updateMatrices();
-    }
-  }
+      right(step = 1) {
+        const fwd3 = this._sub(this.at, this.eye);
+        const right3 = this._cross(fwd3, this.up); // fwd × up
+        const horiz = this._normalize(new Vector3([right3.elements[0], 0, right3.elements[2]]));
+        const move  = this._scale(horiz, step);
+        const newEye = this._add(this.eye, move);
+        const newAt  = this._add(this.at,  move);
+        if (this._canMoveTo(newEye)) {
+          this.eye = newEye;
+          this.at  = newAt;
+          this.updateMatrices();
+        }
+      }
 panLeft() {
     this._pan(+5);
 }
 
 panRight() {
     this._pan(-5);
+}
+
+tiltUp(angleDeg = 5) {
+  this._tilt(angleDeg);
+}
+
+tiltDown(angleDeg = 5) {
+  this._tilt(-angleDeg);
+}
+
+_tilt(angleDeg) {
+  // Rotate the view direction around the camera's right axis
+  const dir = this._sub(this.at, this.eye);              // current view direction
+  // Compute right axis = dir × up
+  const right = this._normalize(this._cross(dir, this.up));
+  // Build rotation matrix around the right axis
+  const rot = new Matrix4().setRotate(angleDeg,
+    right.elements[0], right.elements[1], right.elements[2]
+  );
+  // Apply rotation
+  const dirNew = rot.multiplyVector3(dir);
+  // Update look-at point
+  this.at = this._add(this.eye, dirNew);
+  this.updateMatrices();
 }
 
 _pan(angleDeg) {

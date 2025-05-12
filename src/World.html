@@ -22,7 +22,10 @@
     <canvas id="webgl" width="400" height="400">
     Please use a browser that supports "canvas"
     </canvas>
+    <div id="buttonsRemaining" style="position:absolute; top:10px; left:10px; color:white; font-size:20px;"></div>
+    <div class="row">find and remove(F) all 5 buttons to win!</div>
     <p id="numdot"> XXX </p>
+    <div class="row">- wasd to move (q/e to pan left/right)</div>
     <div class="row">
       - rotate camera with mouse (click and drag)
     </div>
@@ -32,9 +35,7 @@
     <div class="row">
       - simple minecraft (F to place, R to remove)
     </div>
-    <div class="row">
-      Camera Angle <input type="range" min="0" max="360" value="5" class="slider" id="angleSlide">
-    </div>
+
     <div class="row">
       Block Types
       <button id="blockTypeSnow">Snow (1)</button>
